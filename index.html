@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Einfache AI mit JavaScript</title>
+    <title>AI mit mehreren Erinnerungen</title>
     <style>
         body { background: #222; color: #fff; font-family: sans-serif; }
         #chat { width: 400px; margin: 50px auto; background: #333; border-radius: 8px; padding: 20px; }
@@ -21,6 +21,7 @@
     <script>
         const messagesDiv = document.getElementById('messages');
         const userInput = document.getElementById('userInput');
+        let memories = [];
 
         function sendMessage() {
             const text = userInput.value.trim();
@@ -41,20 +42,52 @@
         }
 
         function aiRespond(input) {
-            input = input.toLowerCase();
-            if (input.includes('hallo') || input.includes('hi')) {
+            const lower = input.toLowerCase();
+
+            // Mehrere Erinnerungen merken
+            if (lower.startsWith("merke:")) {
+                let content = input.slice(6).trim();
+                if (content) {
+                    memories.push(content);
+                    return `Okay, ich merke mir: "${content}"`;
+                } else {
+                    return "Bitte schreibe nach 'merke:' was ich mir merken soll.";
+                }
+            }
+
+            // Alle Erinnerungen ausgeben
+            if (
+                lower.includes("was hast du dir gemerkt") ||
+                lower.includes("was kannst du dir merken") ||
+                lower.includes("erinnere dich") ||
+                lower.includes("erinnerst du dich") ||
+                lower.includes("liste erinnerungen") ||
+                lower.includes("zeig erinnerungen")
+            ) {
+                if (memories.length === 0) {
+                    return "Ich habe mir noch nichts gemerkt.";
+                }
+                return "Das habe ich mir gemerkt:\n- " + memories.join("\n- ");
+            }
+
+            // Passende Erinnerung bei Schlagwort
+            for (let memo of memories) {
+                // Wenn das Stichwort in der Eingabe vorkommt, antworte mit dem passenden Memo
+                let keyword = memo.split(" ")[0].toLowerCase();
+                if (lower.includes(keyword)) {
+                    return `Du hast mir dazu gesagt: "${memo}"`;
+                }
+            }
+
+            // Standardantworten
+            if (lower.includes('hallo') || lower.includes('hi')) {
                 return "Hallo! Wie kann ich dir helfen?";
             }
-            if (input.includes('name')) {
-                return "Ich bin eine kleine JavaScript-AI.";
+            if (lower.includes('hilfe')) {
+                return "Schreibe 'merke: <dein Text>' damit ich mir etwas merke! Frage: 'Was hast du dir gemerkt?' für alle Erinnerungen.";
             }
-            if (input.includes('wetter')) {
-                return "Ich weiß leider nicht, wie das Wetter ist. Frag Google!";
-            }
-            if (input.includes('hilfe')) {
-                return "Frag mich nach meinem Namen, sag Hallo oder frag nach dem Wetter!";
-            }
-            return "Das habe ich nicht verstanden. Frag mich etwas anderes!";
+
+            return "Das habe ich nicht verstanden. Schreibe 'hilfe' für Tipps!";
         }
 
         userInput.addEventListener('keydown', function(e) {
