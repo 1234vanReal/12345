@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Tesla zerstören!</title>
+    <style>
+        body { text-align: center; background: #111; color: #fff; }
+        #tesla-img { width: 400px; transition: filter 0.2s; cursor: pointer; }
+        #damage { font-size: 2em; margin: 20px; }
+        #game-over { font-size: 2.5em; color: red; display: none; }
+    </style>
+</head>
+<body>
+    <h1>Tesla zerstören!</h1>
+    <div id="damage">Schaden: 0 / 10</div>
+    <img id="tesla-img" src="https://cdn.pixabay.com/photo/2016/11/29/07/09/auto-1868726_1280.jpg" alt="Tesla">
+    <div id="game-over">Tesla zerstört! 🎉</div>
+    <script>
+        let damage = 0;
+        const maxDamage = 10;
+        const teslaImg = document.getElementById('tesla-img');
+        const damageText = document.getElementById('damage');
+        const gameOverText = document.getElementById('game-over');
+
+        teslaImg.addEventListener('click', function() {
+            if (damage < maxDamage) {
+                damage++;
+                teslaImg.style.filter = `grayscale(${damage * 10}%) brightness(${100 - damage * 5}%)`;
+                damageText.textContent = `Schaden: ${damage} / ${maxDamage}`;
+                if (damage === maxDamage) {
+                    gameOverText.style.display = 'block';
+                    teslaImg.style.filter = 'grayscale(100%) brightness(50%) blur(2px)';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
