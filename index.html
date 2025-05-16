@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>AI mit mehreren Erinnerungen</title>
+    <title>AI mit Erinnerungen & Internet</title>
     <style>
         body { background: #222; color: #fff; font-family: sans-serif; }
         #chat { width: 400px; margin: 50px auto; background: #333; border-radius: 8px; padding: 20px; }
@@ -28,9 +28,7 @@
             if (!text) return;
             addMessage('user', text);
             userInput.value = '';
-            setTimeout(() => {
-                addMessage('ai', aiRespond(text));
-            }, 500);
+            processInput(text);
         }
 
         function addMessage(sender, text) {
@@ -41,7 +39,7 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        function aiRespond(input) {
+        function processInput(input) {
             const lower = input.toLowerCase();
 
             // Mehrere Erinnerungen merken
@@ -49,13 +47,14 @@
                 let content = input.slice(6).trim();
                 if (content) {
                     memories.push(content);
-                    return `Okay, ich merke mir: "${content}"`;
+                    setTimeout(() => addMessage('ai', `Okay, ich merke mir: "${content}"`), 500);
                 } else {
-                    return "Bitte schreibe nach 'merke:' was ich mir merken soll.";
+                    setTimeout(() => addMessage('ai', "Bitte schreibe nach 'merke:' was ich mir merken soll."), 500);
                 }
+                return;
             }
 
-            // Alle Erinnerungen ausgeben
+            // Erinnerungen auflisten
             if (
                 lower.includes("was hast du dir gemerkt") ||
                 lower.includes("was kannst du dir merken") ||
@@ -65,29 +64,45 @@
                 lower.includes("zeig erinnerungen")
             ) {
                 if (memories.length === 0) {
-                    return "Ich habe mir noch nichts gemerkt.";
+                    setTimeout(() => addMessage('ai', "Ich habe mir noch nichts gemerkt."), 500);
+                } else {
+                    setTimeout(() => addMessage('ai', "Das habe ich mir gemerkt:\n- " + memories.join("\n- ")), 500);
                 }
-                return "Das habe ich mir gemerkt:\n- " + memories.join("\n- ");
+                return;
             }
 
             // Passende Erinnerung bei Schlagwort
             for (let memo of memories) {
-                // Wenn das Stichwort in der Eingabe vorkommt, antworte mit dem passenden Memo
                 let keyword = memo.split(" ")[0].toLowerCase();
                 if (lower.includes(keyword)) {
-                    return `Du hast mir dazu gesagt: "${memo}"`;
+                    setTimeout(() => addMessage('ai', `Du hast mir dazu gesagt: "${memo}"`), 500);
+                    return;
                 }
             }
 
             // Standardantworten
             if (lower.includes('hallo') || lower.includes('hi')) {
-                return "Hallo! Wie kann ich dir helfen?";
+                setTimeout(() => addMessage('ai', "Hallo! Wie kann ich dir helfen?"), 500);
+                return;
             }
             if (lower.includes('hilfe')) {
-                return "Schreibe 'merke: <dein Text>' damit ich mir etwas merke! Frage: 'Was hast du dir gemerkt?' für alle Erinnerungen.";
+                setTimeout(() => addMessage('ai', "Schreibe 'merke: <dein Text>' damit ich mir etwas merke! Frage: 'Was hast du dir gemerkt?' für alle Erinnerungen. Oder stelle allgemeine Fragen, dann versuche ich Infos aus dem Internet zu holen."), 500);
+                return;
             }
 
-            return "Das habe ich nicht verstanden. Schreibe 'hilfe' für Tipps!";
+            // INTERNET-SUCHE: DuckDuckGo Instant Answer API
+            fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(input)}&format=json&no_html=1&skip_disambig=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.AbstractText) {
+                        addMessage('ai', data.AbstractText);
+                    } else if (data.Answer) {
+                        addMessage('ai', data.Answer);
+                    } else {
+                        addMessage('ai', "Dazu habe ich leider nichts gefunden.");
+                    }
+                })
+                .catch(() => addMessage('ai', "Fehler beim Abrufen von Internet-Infos."));
         }
 
         userInput.addEventListener('keydown', function(e) {
