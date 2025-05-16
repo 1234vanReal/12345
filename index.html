@@ -2,10 +2,10 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Tesla zerstören!</title>
+    <title>Duolingo zerstören!</title>
     <style>
         body { text-align: center; background: #111; color: #fff; }
-        #tesla-img { width: 400px; transition: filter 0.2s; cursor: pointer; }
+        #duo-img { width: 300px; transition: filter 0.2s; cursor: pointer; }
         #damage { font-size: 2em; margin: 20px; }
         #game-over { font-size: 2.5em; color: red; display: none; }
         #boom { 
@@ -14,7 +14,7 @@
             left: 50%; 
             top: 50%; 
             transform: translate(-50%, -60%); 
-            width: 300px; 
+            width: 200px; 
             pointer-events: none;
             z-index: 10;
         }
@@ -25,40 +25,26 @@
     </style>
 </head>
 <body>
-    <h1>Tesla zerstören!</h1>
+    <h1>Duolingo zerstören!</h1>
     <div id="damage">Schaden: 0 / 10</div>
     <div class="container">
-        <!-- Tesla-Bild -->
-        <img id="tesla-img" src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=800&q=80" alt="Tesla">
-        <!-- Boom Effekt als animiertes GIF (kannst du ersetzen, z.B. durch eigene SVG/PNG) -->
+        <!-- Duolingo Eule (SVG von Wikimedia Commons) -->
+        <img id="duo-img" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Duolingo_logo_PNG3.png" alt="Duolingo Eule">
+        <!-- Boom Effekt als animiertes GIF -->
         <img id="boom" src="https://media.giphy.com/media/oe33xf3B50fsc/giphy.gif" alt="Boom!">
     </div>
-    <div id="game-over">Tesla zerstört! 🎉</div>
+    <div id="game-over">Duolingo zerstört! 🎉</div>
     <script>
         let damage = 0;
         const maxDamage = 10;
-        const teslaImg = document.getElementById('tesla-img');
+        const duoImg = document.getElementById('duo-img');
         const damageText = document.getElementById('damage');
         const gameOverText = document.getElementById('game-over');
         const boom = document.getElementById('boom');
 
-        teslaImg.addEventListener('click', function() {
+        duoImg.addEventListener('click', function() {
             if (damage < maxDamage) {
                 damage++;
-                // Nur Graustufen hinzufügen
-                teslaImg.style.filter = `grayscale(${damage * 10}%)`;
-                damageText.textContent = `Schaden: ${damage} / ${maxDamage}`;
-                if (damage === maxDamage) {
-                    gameOverText.style.display = 'block';
-                    teslaImg.style.filter = 'grayscale(100%) blur(2px)';
-                    boom.style.display = 'block';
-                    // Nach 2 Sekunden verschwindet der Boom-Effekt wieder
-                    setTimeout(() => {
-                        boom.style.display = 'none';
-                    }, 2000);
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+                duoImg.style.filter = `grayscale(${damage * 10}%)`;
+                damageText.textContent = `Schaden: ${damage} /`*
+
