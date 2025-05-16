@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Einfache AI mit JavaScript</title>
+    <style>
+        body { background: #222; color: #fff; font-family: sans-serif; }
+        #chat { width: 400px; margin: 50px auto; background: #333; border-radius: 8px; padding: 20px; }
+        #messages { min-height: 200px; margin-bottom: 10px; }
+        .user { color: #8ae234; }
+        .ai { color: #729fcf; }
+        input, button { font-size: 1em; }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <div id="messages"></div>
+        <input id="userInput" type="text" placeholder="Schreibe etwas..." autofocus>
+        <button onclick="sendMessage()">Senden</button>
+    </div>
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+
+        function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            addMessage('user', text);
+            userInput.value = '';
+            setTimeout(() => {
+                addMessage('ai', aiRespond(text));
+            }, 500);
+        }
+
+        function addMessage(sender, text) {
+            const msg = document.createElement('div');
+            msg.className = sender;
+            msg.textContent = (sender === 'user' ? 'Du: ' : 'AI: ') + text;
+            messagesDiv.appendChild(msg);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function aiRespond(input) {
+            input = input.toLowerCase();
+            if (input.includes('hallo') || input.includes('hi')) {
+                return "Hallo! Wie kann ich dir helfen?";
+            }
+            if (input.includes('name')) {
+                return "Ich bin eine kleine JavaScript-AI.";
+            }
+            if (input.includes('wetter')) {
+                return "Ich weiß leider nicht, wie das Wetter ist. Frag Google!";
+            }
+            if (input.includes('hilfe')) {
+                return "Frag mich nach meinem Namen, sag Hallo oder frag nach dem Wetter!";
+            }
+            return "Das habe ich nicht verstanden. Frag mich etwas anderes!";
+        }
+
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
